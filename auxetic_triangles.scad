@@ -49,7 +49,12 @@ module multicell(l=15, a=0.5, t=0.5, theta=13, u = 1, v= 1) {
   }
 }
 
+// difference() {
+//   // square(10);
+//   cell(10, t=1);
+// }
+
 
 linear_extrude(height=4) {
-  multicell(10, u=8, v=8, a=0.58, t=0.7, theta=15);
+  multicell(10, u=3, v=4, a=0.53, t=0.7, theta=15);
 }
