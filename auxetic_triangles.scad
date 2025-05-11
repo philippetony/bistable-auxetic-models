@@ -25,7 +25,7 @@ module cell(l=15, a=0.5, t=0.5, theta=13) {
 //  -1/6*sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)*sin(theta) + 2*l*sin(theta)^2 - 3*l*t)])
 //   circle(0.5);  
   difference() {
-    // polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
+    polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
     for( i = [0:2]) {
       translate([l/2,l/3*sqrt(3/4), 0])
       rotate([0, 0, 120*i])
@@ -117,6 +117,30 @@ module extruded_multicell(l=15, a=0.5, t=0.5, theta=13, u = 1, v= 1, height=4) {
   }
 }
 
-rotate([0,0,-90])
-extruded_multicell(cell_size, u=num_lines, v=num_cols, a=a, t=t, theta=theta, height=height);
+// rotate([0,0,-90])
+// extruded_multicell(cell_size, u=num_lines, v=num_cols, a=a, t=t, theta=theta, height=height);
 
+module hexagon_dome(l=15, t=0.1, c=5) {
+  cell_height = l*sqrt(3/4);
+  for (z = [0:2])
+  rotate([0,0,120*z])
+  for (m=[0:1])
+  mirror([0,m,0])
+  translate([l/2,cell_height/2])
+  for ( u = [0:c]) {
+  for ( v = [0:u]) {
+      theta = (u+v)*12/c+1;
+      computed_a = -1/30*(10*sqrt(3)*l*cos(theta)^2*sin(theta) + 10*sqrt(3)*l*sin(theta)^3 + 30*(2*l*t - l)*cos(theta)^3 + 30*(2*l*t - l)*cos(theta)*sin(theta)^2 + 39*sqrt(cos(theta)^2 + sin(theta)^2))/(l*cos(theta)^2 + l*sin(theta)^2);
+      if (u+v<c) {
+      translate([l*u/2,cell_height*v])
+      mirror([0,(u+v)%2,0])
+      translate([-l/2,-cell_height/2])
+      cell(l=l,a=computed_a,t=t,theta=theta);
+        // text(str("U",u,",V",v), 3, $fn=16);
+      }
+  }
+  };
+}
+
+linear_extrude(height=height) 
+hexagon_dome(l=26,c=5);
