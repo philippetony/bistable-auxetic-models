@@ -77,12 +77,12 @@ module multicell(l=15, a=0.5, t=0.5, theta=13, u = 1, v= 1) {
   }
 }
 
-// difference() {
-//   l=cell_size;
-//   polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
-//   // square());
-//   cell(cell_size, t=t, a=a, theta=theta);
-// }
+difference() {
+  l=cell_size;
+  polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
+  // square());
+  cell(cell_size, t=t, a=a, theta=theta);
+}
 
 module extruded_multicell(l=15, a=0.5, t=0.1, theta=13, u = 1, v= 1, height=4) {
   difference() {
@@ -183,4 +183,4 @@ module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=65) {
   }
 };
 
-cylinder_bracelet(l=26);
+// cylinder_bracelet(l=26);
