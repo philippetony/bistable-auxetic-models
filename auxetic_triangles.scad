@@ -18,14 +18,16 @@ module cut(x0=0,y0=0,x1=1,y1=1,w=0.3)
         circle(r=w);
    }
    
-module cell(l=15, a=0.5, t=0.5, theta=13) {
+module cell(l=15, a=0.5, t=0.5, theta=13, filled=0) {
   echo("Taille gond", 1/6*sqrt((6*a*l*cos(theta) + 3*l*t + sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)^2 + 2*l*cos(theta)*sin(theta) - sqrt(3)*l*t))^2 + (6*a*l*sin(theta) + 3*sqrt(3)*l*t + sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)*sin(theta) + 2*l*sin(theta)^2 - 3*l*t))^2))
 //   union() {
 //     translate([-1/6*sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)^2 + 2*l*cos(theta)*sin(theta) - sqrt(3)*l*t),
 //  -1/6*sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)*sin(theta) + 2*l*sin(theta)^2 - 3*l*t)])
 //   circle(0.5);  
   difference() {
-    polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
+    if(filled) {
+     polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
+    };
     for( i = [0:2]) {
       translate([l/2,l/3*sqrt(3/4), 0])
       rotate([0, 0, 120*i])
@@ -135,7 +137,7 @@ module hexagon_dome(l=15, t=0.1, c=5) {
       translate([l*u/2,cell_height*v])
       mirror([0,(u+v)%2,0])
       translate([-l/2,-cell_height/2])
-      cell(l=l,a=computed_a,t=t,theta=theta);
+      cell(l=l,a=computed_a,t=t,theta=theta, filled=1);
         // text(str("U",u,",V",v), 3, $fn=16);
       }
   }
