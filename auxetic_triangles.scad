@@ -84,7 +84,7 @@ module multicell(l=15, a=0.5, t=0.5, theta=13, u = 1, v= 1) {
 //   cell(cell_size, t=t, a=a, theta=theta);
 // }
 
-module extruded_multicell(l=15, a=0.5, t=0.5, theta=13, u = 1, v= 1, height=4) {
+module extruded_multicell(l=15, a=0.5, t=0.1, theta=13, u = 1, v= 1, height=4) {
   difference() {
     render()
     linear_extrude(height=height) {
@@ -142,7 +142,45 @@ module hexagon_dome(l=15, t=0.1, c=5) {
       }
   }
   };
-}
+};
 
-linear_extrude(height=height) 
-hexagon_dome(l=26,c=5);
+// linear_extrude(height=height) 
+// hexagon_dome(l=26,c=5);
+
+module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=65) {
+  cell_height = l*sqrt(3/4);
+  perimeter = 2*PI*r;
+  num_cells = round(perimeter / l)*2;
+  // render()
+  // cylinder(h=cell_height*2,r=r+2, center=true);
+  // cylinder(h=cell_height*2+1,r=r, center=true);
+  difference() {
+  cylinder(h=cell_height,r=r+2, center=true);
+  cylinder(h=cell_height+1,r=r, center=true);
+  union() {
+  // for (k=[0:1])
+  // // translate([0, 0, -cell_height/2])
+  // mirror([0,0,k])
+  // for (j=[0:1])
+  // translate([0, 0, -cell_height*0.4])
+  // mirror([0,0,j])
+  // translate([0,0,cell_height*j])
+  for (x = [0:num_cells]) {
+    rotate([0,0,360/num_cells*x])
+    translate([0,r+10,0])
+    // multmatrix(m=[
+    //   [1,0,0],
+    //   [0,1,0], 
+    //   [0,0,1]
+    //   ])
+    rotate([90,0,0])
+    linear_extrude(height=20)
+    mirror([0,x%2,0])
+    translate([-l/2,-cell_height/2])
+    cell(l=l, a=a, t=t, theta=theta);
+  }
+  }
+  }
+};
+
+cylinder_bracelet(l=26);
