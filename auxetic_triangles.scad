@@ -77,12 +77,12 @@ module multicell(l=15, a=0.5, t=0.5, theta=13, u = 1, v= 1) {
   }
 }
 
-difference() {
-  l=cell_size;
-  polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
-  // square());
-  cell(cell_size, t=t, a=a, theta=theta);
-}
+// difference() {
+//   l=cell_size;
+//   polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
+//   // square());
+//   cell(cell_size, t=t, a=a, theta=theta);
+// }
 
 module extruded_multicell(l=15, a=0.5, t=0.1, theta=13, u = 1, v= 1, height=4) {
   difference() {
@@ -147,21 +147,88 @@ module hexagon_dome(l=15, t=0.1, c=5) {
 // linear_extrude(height=height) 
 // hexagon_dome(l=26,c=5);
 
-module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=65) {
+module hexagon_bra(l=15, t=0.1, c=5) {
+  cell_height = l*sqrt(3/4);
+
+  
+  for (z = [0:2])
+  rotate([0,0,120*z])
+  for (m=[0:1])
+  mirror([0,m,0])
+  translate([l/2,cell_height/2])
+  for ( u = [0:c]) {
+  for ( v = [0:u]) {
+      theta = (u+v)*12/c+1;
+      computed_a = -1/30*(10*sqrt(3)*l*cos(theta)^2*sin(theta) + 10*sqrt(3)*l*sin(theta)^3 + 30*(2*l*t - l)*cos(theta)^3 + 30*(2*l*t - l)*cos(theta)*sin(theta)^2 + 39*sqrt(cos(theta)^2 + sin(theta)^2))/(l*cos(theta)^2 + l*sin(theta)^2);
+      if (u+v<c) {
+      translate([l*u/2,cell_height*v])
+      mirror([0,(u+v)%2,0])
+      translate([-l/2,-cell_height/2])
+      cell(l=l,a=computed_a,t=t,theta=theta, filled=1);
+        // text(str("U",u,",V",v), 3, $fn=16);
+      }
+  }
+  };
+  translate([(c+1)*l, 0, 0]) {
+    for (z = [0:2])
+    rotate([0,0,120*z])
+    for (m=[0:1])
+    mirror([0,m,0])
+    translate([l/2,cell_height/2])
+    for ( u = [0:c]) {
+    for ( v = [0:u]) {
+        theta = (u+v)*12/c+1;
+        computed_a = -1/30*(10*sqrt(3)*l*cos(theta)^2*sin(theta) + 10*sqrt(3)*l*sin(theta)^3 + 30*(2*l*t - l)*cos(theta)^3 + 30*(2*l*t - l)*cos(theta)*sin(theta)^2 + 39*sqrt(cos(theta)^2 + sin(theta)^2))/(l*cos(theta)^2 + l*sin(theta)^2);
+        if (u+v<c) {
+        translate([l*u/2,cell_height*v])
+        mirror([0,(u+v)%2,0])
+        translate([-l/2,-cell_height/2])
+        cell(l=l,a=computed_a,t=t,theta=theta, filled=1);
+          // text(str("U",u,",V",v), 3, $fn=16);
+        }
+    }
+    };
+  }
+  e=c-2;
+  for (j = [0:1])
+  mirror([0,j,0])
+  translate([ceil(c/2)*l,((c-1)/2)*cell_height])
+  translate([-ceil(e/2)/2*l,0])
+  mirror([0,1,0])
+  translate([l/2,cell_height/2])
+  for ( u = [0:c]) {
+  for ( v = [0:u]) {
+      theta = 12;
+      computed_a = -1/30*(10*sqrt(3)*l*cos(theta)^2*sin(theta) + 10*sqrt(3)*l*sin(theta)^3 + 30*(2*l*t - l)*cos(theta)^3 + 30*(2*l*t - l)*cos(theta)*sin(theta)^2 + 39*sqrt(cos(theta)^2 + sin(theta)^2))/(l*cos(theta)^2 + l*sin(theta)^2);
+      if (u+v<e) {
+      translate([l*u/2,cell_height*v])
+      mirror([0,(u+v)%2,0])
+      translate([-l/2,-cell_height/2])
+      cell(l=l,a=computed_a,t=t,theta=theta, filled=1);
+        // text(str("U",u,",V",v), 3, $fn=16);
+      }
+  }
+  };
+};
+
+// linear_extrude(height=height) 
+// hexagon_bra(l=26,c=7);
+
+module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=32) {
   cell_height = l*sqrt(3/4);
   perimeter = 2*PI*r;
-  num_cells = round(perimeter / l)*2;
+  num_cells = round(perimeter / l)*2/0.89;
   // render()
   // cylinder(h=cell_height*2,r=r+2, center=true);
   // cylinder(h=cell_height*2+1,r=r, center=true);
   difference() {
-  cylinder(h=cell_height,r=r+2, center=true);
-  cylinder(h=cell_height+1,r=r, center=true);
+  cylinder(h=cell_height-4,r=r+2, center=true);
+  cylinder(h=cell_height-3,r=r, center=true);
   union() {
   // for (k=[0:1])
   // // translate([0, 0, -cell_height/2])
   // mirror([0,0,k])
-  // for (j=[0:1])
+  // for (j=[0:1])v
   // translate([0, 0, -cell_height*0.4])
   // mirror([0,0,j])
   // translate([0,0,cell_height*j])
@@ -174,7 +241,7 @@ module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=65) {
     //   [0,0,1]
     //   ])
     rotate([90,0,0])
-    linear_extrude(height=20)
+    linear_extrude(height=20, twist=0, scale=0.74, convexity=3)
     mirror([0,x%2,0])
     translate([-l/2,-cell_height/2])
     cell(l=l, a=a, t=t, theta=theta);
@@ -183,4 +250,4 @@ module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=65) {
   }
 };
 
-// cylinder_bracelet(l=26);
+cylinder_bracelet(l=26);
