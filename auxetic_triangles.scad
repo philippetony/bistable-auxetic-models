@@ -20,10 +20,6 @@ module cut(x0=0,y0=0,x1=1,y1=1,w=0.3)
    
 module cell(l=15, a=0.5, t=0.5, theta=13, filled=0) {
   echo("Taille gond", 1/6*sqrt((6*a*l*cos(theta) + 3*l*t + sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)^2 + 2*l*cos(theta)*sin(theta) - sqrt(3)*l*t))^2 + (6*a*l*sin(theta) + 3*sqrt(3)*l*t + sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)*sin(theta) + 2*l*sin(theta)^2 - 3*l*t))^2))
-//   union() {
-//     translate([-1/6*sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)^2 + 2*l*cos(theta)*sin(theta) - sqrt(3)*l*t),
-//  -1/6*sqrt(3)*(2*(2*sqrt(3)*l*t - sqrt(3)*l)*cos(theta)*sin(theta) + 2*l*sin(theta)^2 - 3*l*t)])
-//   circle(0.5);  
   difference() {
     if(filled) {
      polygon([[0,0], [l,0], [l/2,sqrt(3/4)*l]]);
@@ -214,16 +210,15 @@ module hexagon_bra(l=15, t=0.1, c=5) {
 // linear_extrude(height=height) 
 // hexagon_bra(l=26,c=7);
 
-module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=32) {
+module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=32, full_height=1.9) {
   cell_height = l*sqrt(3/4);
   perimeter = 2*PI*r;
   num_cells = round(perimeter / l)*2/0.89;
-  // render()
-  // cylinder(h=cell_height*2,r=r+2, center=true);
-  // cylinder(h=cell_height*2+1,r=r, center=true);
+  // cylinder(h=2*cell_height-4,r=r+2, center=true);
+  // cylinder(h=2*cell_height-3,r=r, center=true);
   difference() {
-  cylinder(h=cell_height-4,r=r+2, center=true);
-  cylinder(h=cell_height-3,r=r, center=true);
+  cylinder(h=full_height*cell_height-4,r=r+2, center=true);
+  cylinder(h=full_height*cell_height-3,r=r, center=true);
   union() {
   // for (k=[0:1])
   // // translate([0, 0, -cell_height/2])
@@ -232,6 +227,12 @@ module cylinder_bracelet(l=15, a=0.60, t=0.1, theta=13, r=32) {
   // translate([0, 0, -cell_height*0.4])
   // mirror([0,0,j])
   // translate([0,0,cell_height*j])
+  // for (k=[0:1])
+  // mirror([0,0,k])
+  // translate([0,0,2*cell_height*0.44])
+  for (j=[0:1])
+  mirror([0,0,j])
+  translate([0,0,cell_height*0.44])
   for (x = [0:num_cells]) {
     rotate([0,0,360/num_cells*x])
     translate([0,r+10,0])
